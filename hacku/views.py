@@ -43,12 +43,15 @@ def start(request):
                 other_user.opponent_score = -1
                 other_user.save()
                 start_time = strftime("%M:%S", gmtime())
+                print  start_time
                 min = int(start_time.split(":")[0])
                 sec = int(start_time.split(":")[1])
+                print min
+                print sec
                 if sec < 45:
                     sec += 15
                 else:
-                    sec -= - 45
+                    sec -= 45
                     min += + 1
                 StartTime(time=(str(min)+":"+str(sec))).save()
 
@@ -81,7 +84,8 @@ def refresh(request):
         elif user.opponent_score == user.max_score:
             user.win = -1
         user.save()
-        return JsonResponse({"score": user.score, "opponent_score": user.opponent_score, "win": user.win})
+        num_photos = Images.objects.all().count()
+        return JsonResponse({"score": user.score, "opponent_score": user.opponent_score, "win": user.win, "total_photos": num_photos})
 
 
 def photo(request):
