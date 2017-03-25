@@ -7,5 +7,6 @@ from hacku import views
 urlpatterns = [
     url(r'^start/$', csrf_exempt(views.start), name='start'),
     url(r'^refresh/$', views.refresh, name='refresh'),
-    # url(r'^photo/$', views.photo, name='photo')
+    url(r'^photo/$', views.photo, name='photo'),
+    url(r'^end/$', views.end, name='end')
 ]

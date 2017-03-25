@@ -8,14 +8,15 @@ from django.db import models
 class RunUser(models.Model):
 	name = models.CharField(max_length=30)
 	email = models.EmailField(primary_key=True)
-	score = models.IntegerField(default=0)
+	score = models.IntegerField(default=-1)
 	max_score = models.IntegerField()
 	lat = models.DecimalField(default=0, decimal_places=3, max_digits=7)
 	long = models.DecimalField(default=0, decimal_places=3, max_digits=7)
 	online = models.BooleanField(default=0)
 	win = models.IntegerField(default=0)
 	opponent_name = models.CharField(max_length=30, default="")
-	opponent_score = models.IntegerField(default=0)
+	opponent_score = models.IntegerField(default=-1)
+	random_array = models.CharField(max_length=10000)
 
 	def __str__(self):
 		return self.name

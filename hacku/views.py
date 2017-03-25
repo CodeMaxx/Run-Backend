@@ -4,14 +4,11 @@ from django.core import serializers
 from django.http import JsonResponse
 from time import gmtime, strftime
 import json
+import random
 
 from models import *
 
 # Create your views here.
-
-
-def index(request):
-    return HttpResponse("Akash Trehan")
 
 
 def start(request):
@@ -26,17 +23,24 @@ def start(request):
             opponents = Online.objects.all()
             opponent_name = ""
             other_user = ""
+            image_list = list(xrange(max_score))
+            random.shuffle(image_list)
+            list_string = ""
+
+            for i in image_list:
+                list_string += str(i) + ":"
+
             for opponent in opponents:
                 if opponent.email != email:
                     other_user = RunUser.objects.filter(email=opponent.email)[0]
                     opponent_name = other_user.name
-            RunUser(name=name, email=email, opponent_name=opponent_name, max_score=max_score, online=online).save()
+            RunUser(name=name, email=email, opponent_name=opponent_name, max_score=max_score, online=online, random_array=list_string[:-1]).save()
             Online(email=email).save()
             if opponent_name == "":
                 return JsonResponse({"wait": -100, "opponent_name": opponent_name})
             else:
                 other_user.opponent_name = name
-                other_user.opponent_score = 0
+                other_user.opponent_score = -1
                 other_user.save()
                 start_time = strftime("%M:%S", gmtime())
                 min = int(start_time.split(":")[0])
@@ -69,5 +73,44 @@ def start(request):
 
 def refresh(request):
     if request.method == "POST":
-        print json.loads(request.body.decode('utf-8'))[u'name']
-        return HttpResponse("lolololo")
+        data = json.loads(request.body.decode('utf-8'))
+        email = data[u'email']
+        user = RunUser.objects.get(email=email)
+        if user.score == user.max_score:
+            user.win = 1
+        elif user.opponent_score == user.max_score:
+            user.win = -1
+        user.save()
+        return JsonResponse({"score": user.score, "opponent_score": user.opponent_score, "win": user.win})
+
+
+def photo(request):
+    data = json.loads(request.body.decode('utf-8'))
+    email = data[u'email']
+    user = RunUser.objects.get(email=email)
+    user.score += 1
+    user.save()
+    num = 0
+    selected_photo_url = ""
+    if user.score < user.max_score:
+        str_list = user.random_array.split(":")
+        final_list = []
+        for i in str_list:
+            final_list.append(int(i))
+        selected_photo_num = final_list[user.score]
+        all_photos = Images.objects.all()
+        selected_photo_url = all_photos[selected_photo_num].url
+        num = all_photos.count()
+    else:
+        user.win = 1
+        user.save()
+
+    return JsonResponse({"photo_url": selected_photo_url, "total_photos": num, "win": user.win})
+
+
+def end(request):
+    if request.method == "POST":
+        StartTime.objects.all().delete()
+        Online.objects.all().delete()
+        RunUser.objects.all().delete()
+    return HttpResponse("Game Over!")
