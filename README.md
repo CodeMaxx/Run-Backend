@@ -1,5 +1,5 @@
 # Run-Backend
 
-Game made for Yahoo! Japan HackU 2017 at IIT Bombay!
+Winner of the Yahoo! Prize at Yahoo! Japan HackU, IIT Bombay
 
 [Link to the Run App](https://github.com/CodeMaxx/Run-App)
