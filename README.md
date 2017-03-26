@@ -2,4 +2,4 @@
 
 Game made for Yahoo! Japan HackU 2017 at IIT Bombay!
 
-[Link to corresponding App](https://github.com/CodeMaxx/Run-App)
+[Link to the Run App](https://github.com/CodeMaxx/Run-App)
